@@ -1,5 +1,8 @@
 <script setup>
 const colorMode = useColorMode();
+const user = useSupabaseUser();
+
+const isLoggedIn = computed(() => !!user.value);
 
 const isDark = computed({
     get() {
@@ -20,6 +23,14 @@ const isDark = computed({
         >
             <NuxtLink to="/">Nuxt AI</NuxtLink>
             <div class="flex items-center justify-end lg:flex-1 gap-1.5">
+                <UButton
+                    icon="i-grommet-icons-github"
+                    color="gray"
+                    variant="ghost"
+                    aria-label="Github"
+                    to="https://github.com/JCaraballo113"
+                    target="_blank"
+                />
                 <ClientOnly>
                     <UButton
                         :icon="
@@ -36,6 +47,12 @@ const isDark = computed({
                     <template #fallback>
                         <div class="w-8 h-8" />
                     </template>
+                </ClientOnly>
+                <ClientOnly>
+                    <UButton
+                        :aria-label="isLoggedIn ? 'Logout' : 'Login'"
+                        :label="isLoggedIn ? 'Logout' : 'Login'"
+                    />
                 </ClientOnly>
             </div>
         </div>

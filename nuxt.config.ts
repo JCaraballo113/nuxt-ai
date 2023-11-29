@@ -9,4 +9,7 @@ export default defineNuxtConfig({
             exclude: ['/'],
         },
     },
+    ui: {
+        icons: ['heroicons', 'grommet-icons'],
+    },
 });
