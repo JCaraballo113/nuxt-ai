@@ -37,8 +37,6 @@ const onRegister = async (event: FormSubmitEvent<Schema>) => {
         },
     });
 
-    console.log(error);
-
     authenticating.value = false;
 
     if (error) {

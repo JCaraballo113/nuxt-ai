@@ -5,7 +5,6 @@ const user = useSupabaseUser();
 const supabaseClient = useSupabaseClient();
 
 const isLoggedIn = computed(() => !!user.value);
-console.log(user.value);
 const avatar = computed(() => {
     if (!isLoggedIn.value) return null;
 
