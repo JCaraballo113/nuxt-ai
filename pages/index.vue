@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const chatInput = ref();
+const chatInput = ref('');
 </script>
 <template>
     <div class="mt-4 p-8">
