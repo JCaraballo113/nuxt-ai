@@ -12,14 +12,12 @@ const isLoggedIn = computed(() => !!user.value);
             + <UIcon name="i-logos-supabase-icon" />
             and langchain
         </h2>
-        <ClientOnly>
-            <UButton
-                v-if="!isLoggedIn"
-                label="Get Started"
-                to="/login"
-                class="mt-8 text-xs md:text-lg"
-            />
-        </ClientOnly>
+        <UButton
+            v-if="!isLoggedIn"
+            label="Get Started"
+            to="/login"
+            class="mt-8 text-xs md:text-lg"
+        />
     </UContainer>
 </template>
 

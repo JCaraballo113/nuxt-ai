@@ -1,8 +1,19 @@
-<script setup>
+<script setup lang="ts">
 const colorMode = useColorMode();
+const router = useRouter();
 const user = useSupabaseUser();
+const supabaseClient = useSupabaseClient();
 
 const isLoggedIn = computed(() => !!user.value);
+console.log(user.value);
+const avatar = computed(() => {
+    if (!isLoggedIn.value) return null;
+
+    return (
+        user.value?.user_metadata.avatar_url ??
+        '/images/avatars/default-avatar.png'
+    );
+});
 
 const isDark = computed({
     get() {
@@ -12,6 +23,14 @@ const isDark = computed({
         colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
     },
 });
+
+const authClick = () => {
+    if (isLoggedIn.value) {
+        supabaseClient.auth.signOut();
+    } else {
+        router.push('/login');
+    }
+};
 </script>
 
 <template>
@@ -48,12 +67,12 @@ const isDark = computed({
                         <div class="w-8 h-8" />
                     </template>
                 </ClientOnly>
-                <ClientOnly>
-                    <UButton
-                        :aria-label="isLoggedIn ? 'Logout' : 'Login'"
-                        :label="isLoggedIn ? 'Logout' : 'Login'"
-                    />
-                </ClientOnly>
+                <UAvatar v-if="isLoggedIn" :src="avatar" />
+                <UButton
+                    :aria-label="isLoggedIn ? 'Logout' : 'Login'"
+                    :label="isLoggedIn ? 'Logout' : 'Login'"
+                    @click="authClick"
+                />
             </div>
         </div>
     </header>
