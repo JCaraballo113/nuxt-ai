@@ -1,7 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     devtools: { enabled: true },
-    modules: ['@nuxt/content', '@nuxt/ui', '@nuxtjs/supabase'],
+    modules: [
+        '@nuxt/content',
+        '@nuxt/ui',
+        '@nuxtjs/supabase',
+        '@nuxtjs/google-fonts',
+    ],
     supabase: {
         redirectOptions: {
             login: '/login',
@@ -11,5 +16,11 @@ export default defineNuxtConfig({
     },
     ui: {
         icons: ['heroicons', 'grommet-icons'],
+    },
+    googleFonts: {
+        families: {
+            Roboto: true,
+            Lato: true,
+        },
     },
 });
