@@ -15,7 +15,7 @@ export default defineNuxtConfig({
         },
     },
     ui: {
-        icons: ['heroicons', 'grommet-icons'],
+        icons: ['heroicons', 'grommet-icons', 'logos', 'raphael'],
     },
     googleFonts: {
         families: {
