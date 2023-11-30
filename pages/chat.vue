@@ -5,7 +5,9 @@
         >
             <ConversationPanel />
         </section>
-        <section class="w-full md:w-[60%] md:h-full h-[60%]"></section>
+        <section class="w-full md:w-[60%] md:h-full h-[60%]">
+            <MessagesPanel />
+        </section>
     </div>
 </template>
 
