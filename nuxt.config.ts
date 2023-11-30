@@ -15,7 +15,13 @@ export default defineNuxtConfig({
         },
     },
     ui: {
-        icons: ['heroicons', 'grommet-icons', 'logos', 'raphael'],
+        icons: [
+            'heroicons',
+            'grommet-icons',
+            'logos',
+            'raphael',
+            'simple-icons',
+        ],
     },
     googleFonts: {
         families: {

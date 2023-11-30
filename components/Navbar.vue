@@ -26,6 +26,7 @@ const isDark = computed({
 const authClick = () => {
     if (isLoggedIn.value) {
         supabaseClient.auth.signOut();
+        router.push('/');
     } else {
         router.push('/login');
     }
@@ -41,14 +42,8 @@ const authClick = () => {
         >
             <NuxtLink to="/">Nuxt AI</NuxtLink>
             <div class="flex items-center justify-end lg:flex-1 gap-1.5">
-                <UButton
-                    icon="i-grommet-icons-github"
-                    color="gray"
-                    variant="ghost"
-                    aria-label="Github"
-                    to="https://github.com/JCaraballo113"
-                    target="_blank"
-                />
+                <ULink v-if="isLoggedIn" to="/chat">Chat</ULink>
+
                 <ClientOnly>
                     <UButton
                         :icon="
