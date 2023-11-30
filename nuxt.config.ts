@@ -7,6 +7,7 @@ export default defineNuxtConfig({
       '@nuxtjs/supabase',
       '@nuxtjs/google-fonts',
       '@pinia/nuxt',
+      '@vueuse/nuxt',
     ],
     supabase: {
         redirectOptions: {

@@ -26,7 +26,15 @@ fetchConversations();
                 class="flex p-4 border-b border-gray-200 dark:border-gray-800 cursor-pointer hover:bg-sky-400/50"
                 @click="setConversation(conversation.id)"
             >
-                {{ conversation.id }}
+                <div class="flex-1 flex justify-between">
+                    <span>{{ conversation.id }}</span>
+                    <span class="dark:text-sky-400 text-sky-600">{{
+                        useTimeAgo(conversation.createdAt).value.replace(
+                            '"',
+                            ''
+                        )
+                    }}</span>
+                </div>
             </div>
         </div>
     </div>
