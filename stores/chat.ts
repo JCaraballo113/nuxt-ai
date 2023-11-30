@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia';
-type Message = {
+export type Message = {
     id: string;
     role: 'assistant' | 'user';
     content: string;
     createdAt: Date;
 };
 
-type Conversation = {
+export type Conversation = {
     id: string;
     user_id: string;
     llm: string | null;
@@ -34,7 +34,7 @@ export const useChatStore = defineStore('chat', () => {
         chatState.error = null;
         const { data, error } = await useFetch('/api/conversations/new');
         if (data.value) {
-            chatState.conversations.push(data.value as Conversation);
+            chatState.conversations.unshift(data.value as Conversation);
             chatState.currentConversation = data.value.id;
         }
         chatState.loading = false;

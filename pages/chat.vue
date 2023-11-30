@@ -3,7 +3,7 @@
         <div
             class="w-[40%] border-r border-gray-200 dark:border-gray-800 h-full"
         >
-            <ChatList />
+            <ConversationPanel />
         </div>
         <div class="w-[60%] h-full"></div>
     </div>
