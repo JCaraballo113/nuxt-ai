@@ -1,15 +1,16 @@
 <script lang="ts" setup>
 import { useChatStore } from '#imports';
 
-const { createConversation, fetchConversations, chatState } = useChatStore();
+const { createConversation, fetchConversations, setConversation, chatState } =
+    useChatStore();
 fetchConversations();
 </script>
 <template>
-    <div class="w-full h-full">
+    <div class="w-full h-full overflow-y-scroll">
         <div
-            class="border-b border-gray-200 dark:border-gray-800 flex justify-between items-center"
+            class="border-b border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-background/75 backdrop-blur"
         >
-            <h3 class="p-4">Chat List</h3>
+            <h3 class="p-4">Conversations</h3>
             <span class="pr-4"
                 ><UButton
                     icon="i-grommet-icons-chat"
@@ -22,7 +23,8 @@ fetchConversations();
         <div>
             <div
                 v-for="conversation in chatState.conversations"
-                class="flex p-4 border-b border-gray-200 dark:border-gray-800 cursor-pointer"
+                class="flex p-4 border-b border-gray-200 dark:border-gray-800 cursor-pointer hover:bg-sky-400/50"
+                @click="setConversation(conversation.id)"
             >
                 {{ conversation.id }}
             </div>
