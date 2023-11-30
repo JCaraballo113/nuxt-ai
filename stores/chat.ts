@@ -55,5 +55,6 @@ export const useChatStore = defineStore('chat', () => {
         chatState,
         createConversation,
         fetchConversations,
+        setConversation,
     };
 });
