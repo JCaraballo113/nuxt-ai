@@ -30,11 +30,14 @@ export const useChatStore = defineStore('chat', () => {
     });
 
     const createConversation = async () => {
+        chatState.loading = true;
+        chatState.error = null;
         const { data, error } = await useFetch('/api/conversations/new');
         if (data.value) {
             chatState.conversations.push(data.value as Conversation);
             chatState.currentConversation = data.value.id;
         }
+        chatState.loading = false;
     };
 
     const fetchConversations = async () => {
