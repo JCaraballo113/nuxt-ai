@@ -1,3 +1,8 @@
+<script lang="ts" setup>
+import { useChatStore } from '#imports';
+
+const { createConversation } = useChatStore();
+</script>
 <template>
     <div class="w-full h-full">
         <div
@@ -9,12 +14,10 @@
                     icon="i-grommet-icons-chat"
                     label="New"
                     size="sm"
-                    style=""
+                    @click="createConversation"
             /></span>
         </div>
     </div>
 </template>
-
-<script lang="ts" setup></script>
 
 <style></style>
