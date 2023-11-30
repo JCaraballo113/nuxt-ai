@@ -24,6 +24,7 @@ fetchConversations();
             <div
                 v-for="conversation in chatState.conversations"
                 class="flex p-4 border-b border-gray-200 dark:border-gray-800 cursor-pointer hover:bg-sky-400/50"
+                :key="conversation.id"
                 @click="setConversation(conversation.id)"
             >
                 <div class="flex-1 flex justify-between">

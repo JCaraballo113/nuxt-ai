@@ -13,6 +13,9 @@ export default defineEventHandler(async (event) => {
         where: {
             user_id,
         },
+        orderBy: {
+            createdAt: 'desc',
+        },
     });
     return conversations;
 });
