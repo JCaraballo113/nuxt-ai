@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { useChatStore } from '#imports';
 
-const { createConversation } = useChatStore();
+const { createConversation, fetchConversations, chatState } = useChatStore();
+fetchConversations();
 </script>
 <template>
     <div class="w-full h-full">
@@ -16,6 +17,11 @@ const { createConversation } = useChatStore();
                     size="sm"
                     @click="createConversation"
             /></span>
+        </div>
+        <div>
+            <div v-for="conversation in chatState.conversations" class="flex">
+                {{ conversation.id }}
+            </div>
         </div>
     </div>
 </template>
