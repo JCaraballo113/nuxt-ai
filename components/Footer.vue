@@ -1,6 +1,6 @@
 <template>
     <footer
-        class="absolute bottom-0 flex items-center justify-center p-8 w-full border-t border-gray-200 dark:border-gray-800"
+        class="bg-background/75 backdrop-blur z-50 absolute bottom-0 flex items-center justify-center h-24 p-8 w-full border-t border-gray-200 dark:border-gray-800"
     >
         <span class="flex items-center">
             Made with
