@@ -1,0 +1,26 @@
+datasource db {
+  url = env("DATABASE_URL")
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "darwin-arm64"]
+}
+
+model Conversation {
+  id   String @id @default(uuid())
+  retriever String?
+  memory String?
+  llm String?
+  user_id String
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id   String @id @default(uuid())
+  role String
+  content String
+  conversation_id String
+  createdAt DateTime @default(now())
+}
