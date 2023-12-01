@@ -18,6 +18,7 @@ export type Message = {
     role: 'assistant' | 'user';
     content: string;
     createdAt: string;
+    delivered: boolean;
 };
 
 export type Conversation = {
@@ -31,7 +32,7 @@ interface ChatState {
     currentConversation: string;
     conversations: Conversation[];
     messages: Message[];
-    error: string | null;
+    error?: string;
     status: CHAT_STATUS;
 }
 export const useChatStore = defineStore('chat', () => {
@@ -39,13 +40,13 @@ export const useChatStore = defineStore('chat', () => {
         currentConversation: '',
         conversations: [],
         messages: [],
-        error: null,
         status: CHAT_STATUS.IDLE,
     });
 
     const createConversation = async () => {
         chat.status = CHAT_STATUS.CREATING_CONVERSATION;
-        chat.error = null;
+        chat.error = undefined;
+        chat.currentConversation = '';
         const { data, error } = await useFetch('/api/conversations/new');
         if (data.value) {
             chat.conversations.unshift(data.value as Conversation);
@@ -56,7 +57,7 @@ export const useChatStore = defineStore('chat', () => {
 
     const fetchConversations = async () => {
         chat.status = CHAT_STATUS.LOADING_CONVERSATIONS;
-        chat.error = null;
+        chat.error = undefined;
         const { data, error } = await useFetch('/api/conversations', {
             headers: useRequestHeaders(['cookie']),
         });
@@ -76,12 +77,54 @@ export const useChatStore = defineStore('chat', () => {
             return;
         }
         chat.status = CHAT_STATUS.SENDING_MESSAGE;
-
         chat.messages.push({
             content,
             role: 'user',
             createdAt: new Date().toString(),
+            delivered: true,
         });
+
+        const { error } = await useFetch(`/api/messages/send`, {
+            method: 'POST',
+            headers: useRequestHeaders(['cookie']),
+            body: JSON.stringify({
+                content,
+                conversation: chat.currentConversation,
+            }),
+        });
+
+        if (true) {
+            chat.status = CHAT_STATUS.ERROR_SENDING_MESSAGE;
+            chat.error = error.value?.message;
+            const lastSentMessage = chat.messages.pop();
+            if (lastSentMessage) {
+                lastSentMessage.delivered = false;
+                chat.messages.push(lastSentMessage);
+            }
+        }
+
+        chat.status = CHAT_STATUS.IDLE;
+    };
+
+    const loadMessages = async () => {
+        chat.messages = [];
+        chat.status = CHAT_STATUS.LOADING_MESSAGES;
+        chat.error = undefined;
+        const controller = new AbortController();
+        const signal = controller.signal;
+        const { data, error } = await useFetch(
+            `/api/messages?conversation=${chat.currentConversation}`,
+            {
+                headers: useRequestHeaders(['cookie']),
+                signal,
+            }
+        );
+        if (data.value) {
+            chat.messages = data.value.map((message) => ({
+                ...message,
+                delivered: true,
+            })) as Message[];
+        }
 
         chat.status = CHAT_STATUS.IDLE;
     };
@@ -92,5 +135,6 @@ export const useChatStore = defineStore('chat', () => {
         fetchConversations,
         setConversation,
         sendMessage,
+        loadMessages,
     };
 });

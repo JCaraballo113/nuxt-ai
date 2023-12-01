@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { CHAT_STATUS } from '~/stores/chat';
 
-const { chat, sendMessage } = useChatStore();
+const { chat, sendMessage, loadMessages } = useChatStore();
 const message = ref('');
 
 const onMessage = () => {
@@ -20,11 +20,14 @@ const messaging = computed(() => {
     );
 });
 
-watch(isChatting, () => {
-    if (isChatting.value) {
-        console.log('User is chatting');
+watch(
+    () => chat.currentConversation,
+    (currConvo, oldConvo) => {
+        if (currConvo !== '' && currConvo !== oldConvo) {
+            loadMessages();
+        }
     }
-});
+);
 </script>
 
 <template>
@@ -41,32 +44,37 @@ watch(isChatting, () => {
             >
                 <p class="p-4">{{ chat.currentConversation }}</p>
             </div>
-            <MessageList />
-            <div
-                class="border-t border-gray-200 dark:border-gray-800 flex justify-between items-center absolute bottom-0 bg-background/75 backdrop-blur w-full"
-            >
-                <UForm
-                    @submit="onMessage"
-                    :state="{ message: message }"
-                    class="p-4 w-full flex justify-between"
+            <template v-if="chat.status !== CHAT_STATUS.LOADING_MESSAGES">
+                <MessageList />
+                <div
+                    class="border-t border-gray-200 dark:border-gray-800 flex justify-between items-center absolute bottom-0 bg-background/75 backdrop-blur w-full"
                 >
-                    <UInput
-                        class="w-11/12"
-                        color="primary"
-                        size="xl"
-                        variant="none"
-                        placeholder="Send a message to our AI overlord..."
-                        v-model="message"
-                    />
-                    <UButton
-                        class="flex-shrink-0 p-3"
-                        icon="i-carbon-send-alt-filled"
-                        :loading="messaging"
-                        size="sm"
-                        type="submit"
-                    />
-                </UForm>
-            </div>
+                    <UForm
+                        @submit="onMessage"
+                        :state="{ message: message }"
+                        class="p-4 w-full flex justify-between"
+                    >
+                        <UInput
+                            class="w-11/12"
+                            color="primary"
+                            size="xl"
+                            variant="none"
+                            placeholder="Send a message to our AI overlord..."
+                            v-model="message"
+                        />
+                        <UButton
+                            class="flex-shrink-0 p-3"
+                            icon="i-carbon-send-alt-filled"
+                            :loading="messaging"
+                            size="sm"
+                            type="submit"
+                        />
+                    </UForm>
+                </div>
+            </template>
+            <template v-else>
+                <UIcon name="spinner" size="xl" spin />
+            </template>
         </div>
     </div>
 </template>
