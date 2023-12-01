@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const { chatState } = useChatStore();
+const { chat } = useChatStore();
 const user = useSupabaseUser();
 const isLoggedIn = computed(() => !!user.value);
 const avatar = computed(() => {

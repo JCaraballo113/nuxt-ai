@@ -1,8 +1,13 @@
 <script lang="ts" setup>
 import { useChatStore } from '#imports';
+import { CHAT_STATUSES } from '~/stores/chat';
 
-const { createConversation, fetchConversations, setConversation, chatState } =
-    useChatStore();
+const { createConversation, fetchConversations, chat } = useChatStore();
+
+const creatingConversation = computed(() => {
+    return chat.status === CHAT_STATUSES.CREATING_CONVERSATION;
+});
+
 fetchConversations();
 </script>
 <template>
@@ -16,11 +21,11 @@ fetchConversations();
                     icon="i-grommet-icons-chat"
                     label="New"
                     size="sm"
-                    :loading="chatState.loading"
+                    :loading="creatingConversation"
                     @click="createConversation"
             /></span>
         </div>
-        <ChatList :conversations="chatState.conversations" />
+        <ChatList :conversations="chat.conversations" />
     </div>
 </template>
 

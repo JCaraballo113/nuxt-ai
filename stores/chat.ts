@@ -1,4 +1,18 @@
 import { defineStore } from 'pinia';
+export enum CHAT_STATUSES {
+    IDLE,
+    LOADING_MESSAGES,
+    SENDING_MESSAGE,
+    RECEIVING_MESSAGE,
+    LOADING_CONVERSATIONS,
+    CREATING_CONVERSATION,
+    ERROR_LOADING_CONVERSATIONS,
+    ERROR_LOADING_MESSAGES,
+    ERROR_SENDING_MESSAGE,
+    ERROR_RECEIVING_MESSAGE,
+    ERROR_LOADING_CONVERSATION,
+    ERROR_CREATING_CONVERSATION,
+}
 export type Message = {
     id?: string;
     role: 'assistant' | 'user';
@@ -18,52 +32,62 @@ interface ChatState {
     conversations: Conversation[];
     messages: Message[];
     error: string | null;
-    loading: boolean;
+    status: CHAT_STATUSES;
 }
 export const useChatStore = defineStore('chat', () => {
-    const chatState = reactive<ChatState>({
+    const chat = reactive<ChatState>({
         currentConversation: '',
         conversations: [],
         messages: [],
         error: null,
-        loading: false,
+        status: CHAT_STATUSES.IDLE,
     });
 
     const createConversation = async () => {
-        chatState.loading = true;
-        chatState.error = null;
+        chat.status = CHAT_STATUSES.CREATING_CONVERSATION;
+        chat.error = null;
         const { data, error } = await useFetch('/api/conversations/new');
         if (data.value) {
-            chatState.conversations.unshift(data.value as Conversation);
-            chatState.currentConversation = data.value.id;
+            chat.conversations.unshift(data.value as Conversation);
+            chat.currentConversation = data.value.id;
         }
-        chatState.loading = false;
+        chat.status = CHAT_STATUSES.IDLE;
     };
 
     const fetchConversations = async () => {
+        chat.status = CHAT_STATUSES.LOADING_CONVERSATIONS;
+        chat.error = null;
         const { data, error } = await useFetch('/api/conversations', {
             headers: useRequestHeaders(['cookie']),
         });
 
         if (data.value) {
-            chatState.conversations = [...data.value] as Conversation[];
+            chat.conversations = [...data.value] as Conversation[];
         }
+        chat.status = CHAT_STATUSES.IDLE;
     };
 
     const setConversation = (conversationId: string) => {
-        chatState.currentConversation = conversationId;
+        chat.currentConversation = conversationId;
     };
 
-    const sendMessage = async (conversationId: string, content: string) => {
-        chatState.messages.push({
+    const sendMessage = async (content: string) => {
+        if (chat.currentConversation === '') {
+            return;
+        }
+        chat.status = CHAT_STATUSES.SENDING_MESSAGE;
+
+        chat.messages.push({
             content,
             role: 'user',
             createdAt: new Date().toString(),
         });
+
+        chat.status = CHAT_STATUSES.IDLE;
     };
 
     return {
-        chatState,
+        chat,
         createConversation,
         fetchConversations,
         setConversation,
