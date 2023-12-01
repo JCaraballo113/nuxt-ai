@@ -21,17 +21,6 @@ const messaging = computed(() => {
     );
 });
 
-const { y } = useScroll(el, { behavior: 'smooth' });
-
-watch(
-    () => chat.status,
-    (currentStatus, oldStatus) => {
-        if (el.value && currentStatus === CHAT_STATUS.SENDING_MESSAGE) {
-            y.value += el.value?.scrollHeight;
-        }
-    }
-);
-
 watch(
     () => chat.currentConversation,
     (currConvo, oldConvo) => {
@@ -50,25 +39,21 @@ watch(
         >
             Start or select a conversation
         </p>
-        <div
-            v-else
-            class="w-full h-full overflow-y-scroll flex flex-col justify-between"
-            ref="el"
-        >
+        <div v-else class="w-full h-full">
             <div
-                class="border-b border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-background/75 backdrop-blur"
+                class="border-b h-[10%] border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-background/75 backdrop-blur"
             >
                 <p class="p-4">{{ chat.currentConversation }}</p>
             </div>
             <template v-if="chat.status !== CHAT_STATUS.LOADING_MESSAGES">
                 <MessageList />
                 <div
-                    class="border-t border-gray-200 dark:border-gray-800 flex justify-between items-center sticky bottom-0 bg-background/75 backdrop-blur w-full"
+                    class="p-4 border-t h-[10%] border-gray-200 dark:border-gray-800 flex justify-between items-center sticky bottom-0 bg-background/75 backdrop-blur w-full"
                 >
                     <UForm
                         @submit="onMessage"
                         :state="{ message: message }"
-                        class="p-4 w-full flex justify-between"
+                        class="w-full flex justify-between"
                     >
                         <UInput
                             class="w-11/12"
