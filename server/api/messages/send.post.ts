@@ -9,6 +9,13 @@ const prisma = new PrismaClient();
 export default defineEventHandler(async (event) => {
     await protectRoute(event);
     const { content, conversation, apiKey } = await readBody(event);
+
+    if (apiKey === '') {
+        throw createError({
+            statusCode: 401,
+            message: 'You must provide your API key',
+        });
+    }
     await prisma.message.create({
         data: {
             role: 'human',

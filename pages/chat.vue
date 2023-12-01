@@ -1,3 +1,13 @@
+<script lang="ts" setup>
+const { chat, setApiKey } = useChatStore();
+const isApiModalOpen = computed(() => chat.apiKey === '');
+const apiKey = ref('');
+
+const handleSubmit = async () => {
+    if (apiKey.value === '') return;
+    setApiKey(apiKey.value);
+};
+</script>
 <template>
     <div class="flex w-full h-[calc(100vh-96px-64px)] flex-col md:flex-row">
         <section
@@ -9,8 +19,37 @@
             <MessagesPanel />
         </section>
     </div>
+    <ClientOnly>
+        <UModal v-model="isApiModalOpen" prevent-close>
+            <div class="p-4">
+                <UCard>
+                    <template #header>
+                        <h4 class="text-xl font-semibold">API Key</h4>
+                    </template>
+                    <p>
+                        Hello! In order to not get murdered by OpenAI rates you
+                        must provide your own API key. Don't worry I never store
+                        it anywhere and only send it over the wire to talk to
+                        OpenAI
+                    </p>
+                    <UInput
+                        class="mt-4"
+                        color="primary"
+                        variant="outline"
+                        v-model="apiKey"
+                        placeholder="Enter your API key here"
+                    />
+                    <UButton @click="handleSubmit" label="Enter" class="mt-4" />
+                    <UButton
+                        type="button"
+                        label="Cancel"
+                        class="ml-4"
+                        @click="$router.push('/')"
+                    />
+                </UCard>
+            </div>
+        </UModal>
+    </ClientOnly>
 </template>
-
-<script lang="ts" setup></script>
 
 <style></style>

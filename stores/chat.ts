@@ -42,6 +42,7 @@ interface ChatState {
     messages: Message[];
     error?: string;
     status: CHAT_STATUS;
+    apiKey: string;
 }
 export const useChatStore = defineStore('chat', () => {
     const chat = reactive<ChatState>({
@@ -49,7 +50,12 @@ export const useChatStore = defineStore('chat', () => {
         conversations: [],
         messages: [],
         status: CHAT_STATUS.IDLE,
+        apiKey: '',
     });
+
+    const setApiKey = (apiKey: string) => {
+        chat.apiKey = apiKey;
+    };
 
     const getLatestMessage = (role: MESSAGE_ROLE) => {
         return [...chat.messages].reverse().find((m) => m.role === role);
@@ -85,7 +91,7 @@ export const useChatStore = defineStore('chat', () => {
     };
 
     const sendMessage = async (content: string) => {
-        if (chat.currentConversation === '') {
+        if (chat.currentConversation === '' || chat.apiKey === '') {
             return;
         }
         chat.messages.push({
@@ -167,5 +173,6 @@ export const useChatStore = defineStore('chat', () => {
         setConversation,
         sendMessage,
         loadMessages,
+        setApiKey,
     };
 });
