@@ -8,8 +8,8 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
     await protectRoute(event);
-    const { content, conversation } = await readBody(event);
-    const userMessage = await prisma.message.create({
+    const { content, conversation, apiKey } = await readBody(event);
+    await prisma.message.create({
         data: {
             role: 'human',
             content,
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
         },
     });
 
-    const llm = buildLLM(true);
+    const llm = buildLLM(apiKey);
     const memory = buildMemory(conversation);
 
     const conversationChain = new ConversationChain({

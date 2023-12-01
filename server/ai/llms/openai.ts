@@ -1,9 +1,8 @@
 import { OpenAI } from 'langchain/llms/openai';
 
-const buildLLM = (streaming: boolean) => {
+const buildLLM = (apiKey: string) => {
     return new OpenAI({
-        openAIApiKey: process.env.OPENAI_API_KEY as string,
-        streaming,
+        openAIApiKey: apiKey,
     });
 };
 
