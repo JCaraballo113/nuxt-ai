@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
         llm,
         memory,
     });
-    const result = await conversationChain.call({ input: content });
+    const { response } = await conversationChain.call({ input: content });
 
-    return userMessage;
+    return response;
 });

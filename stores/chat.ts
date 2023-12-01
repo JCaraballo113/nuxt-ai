@@ -13,12 +13,20 @@ export enum CHAT_STATUS {
     ERROR_LOADING_CONVERSATION = 'ERROR_LOADING_CONVERSATION',
     ERROR_CREATING_CONVERSATION = 'ERROR_CREATING_CONVERSATION',
 }
+
+export type MESSAGE_ROLE = 'human' | 'ai';
+
+export enum MESSAGE_STATUS {
+    DELIVERED = 'DELIVERED',
+    PENDING = 'PENDING',
+    FAILED = 'FAILED',
+}
 export type Message = {
     id?: string;
-    role: 'ai' | 'human';
+    role: MESSAGE_ROLE;
     content: string;
     createdAt: string;
-    delivered: boolean;
+    status: MESSAGE_STATUS;
 };
 
 export type Conversation = {
@@ -42,6 +50,10 @@ export const useChatStore = defineStore('chat', () => {
         messages: [],
         status: CHAT_STATUS.IDLE,
     });
+
+    const getLatestMessage = (role: MESSAGE_ROLE) => {
+        return [...chat.messages].reverse().find((m) => m.role === role);
+    };
 
     const createConversation = async () => {
         chat.status = CHAT_STATUS.CREATING_CONVERSATION;
@@ -81,10 +93,17 @@ export const useChatStore = defineStore('chat', () => {
             content,
             role: 'human',
             createdAt: new Date().toString(),
-            delivered: true,
+            status: MESSAGE_STATUS.DELIVERED,
         });
 
-        const { error } = await useFetch(`/api/messages/send`, {
+        chat.messages.push({
+            content: '',
+            role: 'ai',
+            createdAt: new Date().toString(),
+            status: MESSAGE_STATUS.PENDING,
+        });
+
+        const { error, data } = await useFetch(`/api/messages/send`, {
             method: 'POST',
             headers: useRequestHeaders(['cookie']),
             body: JSON.stringify({
@@ -96,10 +115,15 @@ export const useChatStore = defineStore('chat', () => {
         if (error.value) {
             chat.status = CHAT_STATUS.ERROR_SENDING_MESSAGE;
             chat.error = error.value?.message;
-            const lastSentMessage = chat.messages.pop();
+            const lastSentMessage = getLatestMessage('human');
             if (lastSentMessage) {
-                lastSentMessage.delivered = false;
-                chat.messages.push(lastSentMessage);
+                lastSentMessage.status = MESSAGE_STATUS.FAILED;
+            }
+        } else {
+            const lastAIMessage = getLatestMessage('ai');
+            if (lastAIMessage) {
+                lastAIMessage.status = MESSAGE_STATUS.DELIVERED;
+                lastAIMessage.content = data.value;
             }
         }
 
@@ -123,7 +147,7 @@ export const useChatStore = defineStore('chat', () => {
         if (data.value) {
             chat.messages = data.value.map((message) => ({
                 ...message,
-                delivered: true,
+                status: MESSAGE_STATUS.DELIVERED,
             })) as Message[];
         }
 

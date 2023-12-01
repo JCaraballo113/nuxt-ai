@@ -27,11 +27,32 @@ const avatar = computed(() => {
                 "
                 alt="Avatar"
             />
-            <p class="ml-4" :class="{ 'line-through': !message.delivered }">
+            <p
+                v-if="message.status !== MESSAGE_STATUS.PENDING"
+                class="ml-4"
+                :class="{
+                    'line-through': message.status === MESSAGE_STATUS.FAILED,
+                }"
+            >
                 {{ message.content }}
             </p>
+            <div class="flex w-full justify-center" v-else>
+                <UIcon name="i-heroicons-arrow-path" class="spin text-3xl" />
+            </div>
         </div>
     </div>
 </template>
+<style scoped>
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
 
-<style scoped></style>
+.spin {
+    animation: spin 1s linear infinite;
+}
+</style>
