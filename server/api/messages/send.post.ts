@@ -23,13 +23,12 @@ export default defineEventHandler(async (event) => {
 
     const llm = buildLLM(true);
     const memory = buildMemory(conversation);
-    console.log(await memory.chatHistory.getMessages());
+
     const conversationChain = new ConversationChain({
         llm,
         memory,
     });
     const result = await conversationChain.call({ input: content });
-    console.log(result);
 
     return userMessage;
 });
