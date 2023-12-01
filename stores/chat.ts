@@ -93,7 +93,7 @@ export const useChatStore = defineStore('chat', () => {
             }),
         });
 
-        if (error) {
+        if (error.value) {
             chat.status = CHAT_STATUS.ERROR_SENDING_MESSAGE;
             chat.error = error.value?.message;
             const lastSentMessage = chat.messages.pop();
@@ -107,8 +107,9 @@ export const useChatStore = defineStore('chat', () => {
     };
 
     const loadMessages = async () => {
-        chat.messages = [];
         chat.status = CHAT_STATUS.LOADING_MESSAGES;
+        chat.messages = [];
+
         chat.error = undefined;
         const controller = new AbortController();
         const signal = controller.signal;
