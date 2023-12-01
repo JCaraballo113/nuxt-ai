@@ -37,7 +37,7 @@ nextTick(() => {
 <template>
     <div
         ref="messageRef"
-        class="flex w-full p-8 dark:bg-sky-600 bg-sky-400 rounded-lg mb-8"
+        class="flex w-full p-8 dark:bg-sky-600 bg-sky-400 rounded-lg mb-8 min-h-[100px]"
     >
         <UAvatar
             :src="
