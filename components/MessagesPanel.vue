@@ -3,6 +3,7 @@ import { CHAT_STATUS } from '~/stores/chat';
 
 const { chat, sendMessage, loadMessages } = useChatStore();
 const message = ref('');
+const el = ref<HTMLElement | null>(null);
 
 const onMessage = () => {
     if (message.value.length > 0) {
@@ -19,6 +20,21 @@ const messaging = computed(() => {
         chat.status === CHAT_STATUS.RECEIVING_MESSAGE
     );
 });
+
+const { y } = useScroll(el, { behavior: 'smooth' });
+
+watch(
+    () => chat.status,
+    (currentStatus, oldStatus) => {
+        if (
+            el.value &&
+            oldStatus === CHAT_STATUS.SENDING_MESSAGE &&
+            currentStatus === CHAT_STATUS.IDLE
+        ) {
+            y.value += el.value?.scrollHeight;
+        }
+    }
+);
 
 watch(
     () => chat.currentConversation,
@@ -38,7 +54,7 @@ watch(
         >
             Start or select a conversation
         </p>
-        <div v-else class="w-full h-full overflow-y-scroll">
+        <div v-else class="w-full h-full overflow-y-scroll" ref="el">
             <div
                 class="border-b border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-background/75 backdrop-blur"
             >

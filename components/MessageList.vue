@@ -2,6 +2,7 @@
 const { chat } = useChatStore();
 const user = useSupabaseUser();
 const isLoggedIn = computed(() => !!user.value);
+
 const avatar = computed(() => {
     if (!isLoggedIn.value) return null;
 
@@ -13,7 +14,7 @@ const avatar = computed(() => {
 </script>
 
 <template>
-    <div class="p-4">
+    <div class="p-4" ref="el">
         <div
             v-for="(message, idx) in chat.messages"
             :key="idx"
