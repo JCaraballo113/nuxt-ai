@@ -40,6 +40,7 @@ interface ChatState {
     currentConversation: string;
     conversations: Conversation[];
     messages: Message[];
+    streaming: boolean;
     error?: string;
     status: CHAT_STATUS;
 }
@@ -48,6 +49,7 @@ export const useChatStore = defineStore('chat', () => {
         currentConversation: '',
         conversations: [],
         messages: [],
+        streaming: false,
         status: CHAT_STATUS.IDLE,
     });
 
@@ -109,6 +111,7 @@ export const useChatStore = defineStore('chat', () => {
             body: JSON.stringify({
                 content,
                 conversation: chat.currentConversation,
+                streaming: chat.streaming,
             }),
         });
 

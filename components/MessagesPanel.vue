@@ -44,6 +44,12 @@ watch(
                 class="border-b h-[10%] border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-background/75 backdrop-blur"
             >
                 <p class="p-4">{{ chat.currentConversation }}</p>
+                <UCheckbox
+                    label="Streaming"
+                    class="pr-4"
+                    name="streaming"
+                    v-model="chat.streaming"
+                />
             </div>
             <template v-if="chat.status !== CHAT_STATUS.LOADING_MESSAGES">
                 <MessageList />
