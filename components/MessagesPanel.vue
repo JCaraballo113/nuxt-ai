@@ -35,12 +35,13 @@ watch(isChatting, () => {
         >
             Start or select a conversation
         </p>
-        <div v-else class="w-full h-full">
+        <div v-else class="w-full h-full overflow-y-scroll">
             <div
                 class="border-b border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-background/75 backdrop-blur"
             >
                 <p class="p-4">{{ chat.currentConversation }}</p>
             </div>
+            <MessageList />
             <div
                 class="border-t border-gray-200 dark:border-gray-800 flex justify-between items-center absolute bottom-0 bg-background/75 backdrop-blur w-full"
             >

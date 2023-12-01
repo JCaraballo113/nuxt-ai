@@ -13,7 +13,23 @@ const avatar = computed(() => {
 </script>
 
 <template>
-    <div class="p-4"></div>
+    <div class="p-4">
+        <div
+            v-for="(message, idx) in chat.messages"
+            :key="idx"
+            class="flex w-full p-8 dark:bg-sky-600 bg-sky-400 rounded-lg mb-8"
+        >
+            <UAvatar
+                :src="
+                    message.role === 'user'
+                        ? avatar
+                        : '/images/avatars/default-avatar.png'
+                "
+                alt="Avatar"
+            />
+            <p class="ml-4">{{ message.content }}</p>
+        </div>
+    </div>
 </template>
 
 <style scoped></style>
