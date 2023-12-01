@@ -73,10 +73,31 @@ watch(
                 </div>
             </template>
             <template v-else>
-                <UIcon name="spinner" size="xl" spin />
+                <div
+                    class="w-full h-full flex flex-col justify-center items-center"
+                >
+                    <UIcon
+                        name="i-heroicons-arrow-path"
+                        class="spin text-6xl"
+                    />
+                    <p>Loading messages...</p>
+                </div>
             </template>
         </div>
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+</style>
