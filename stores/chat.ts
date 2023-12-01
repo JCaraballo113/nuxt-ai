@@ -40,7 +40,6 @@ interface ChatState {
     currentConversation: string;
     conversations: Conversation[];
     messages: Message[];
-    streaming: boolean;
     error?: string;
     status: CHAT_STATUS;
 }
@@ -49,7 +48,6 @@ export const useChatStore = defineStore('chat', () => {
         currentConversation: '',
         conversations: [],
         messages: [],
-        streaming: false,
         status: CHAT_STATUS.IDLE,
     });
 
@@ -111,7 +109,6 @@ export const useChatStore = defineStore('chat', () => {
             body: JSON.stringify({
                 content,
                 conversation: chat.currentConversation,
-                streaming: chat.streaming,
             }),
         });
 
@@ -119,8 +116,14 @@ export const useChatStore = defineStore('chat', () => {
             chat.status = CHAT_STATUS.ERROR_SENDING_MESSAGE;
             chat.error = error.value?.message;
             const lastSentMessage = getLatestMessage('human');
+            const lastAiMessage = getLatestMessage('ai');
             if (lastSentMessage) {
                 lastSentMessage.status = MESSAGE_STATUS.FAILED;
+            }
+
+            if (lastAiMessage) {
+                lastAiMessage.status = MESSAGE_STATUS.FAILED;
+                lastAiMessage.content = 'Sorry, I cant help you right now';
             }
         } else {
             const lastAIMessage = getLatestMessage('ai');
