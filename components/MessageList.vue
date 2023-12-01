@@ -27,7 +27,9 @@ const avatar = computed(() => {
                 "
                 alt="Avatar"
             />
-            <p class="ml-4">{{ message.content }}</p>
+            <p class="ml-4" :class="{ 'line-through': !message.delivered }">
+                {{ message.content }}
+            </p>
         </div>
     </div>
 </template>

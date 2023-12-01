@@ -93,7 +93,7 @@ export const useChatStore = defineStore('chat', () => {
             }),
         });
 
-        if (true) {
+        if (error) {
             chat.status = CHAT_STATUS.ERROR_SENDING_MESSAGE;
             chat.error = error.value?.message;
             const lastSentMessage = chat.messages.pop();
