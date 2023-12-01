@@ -88,7 +88,6 @@ export const useChatStore = defineStore('chat', () => {
         if (chat.currentConversation === '') {
             return;
         }
-        chat.status = CHAT_STATUS.SENDING_MESSAGE;
         chat.messages.push({
             content,
             role: 'human',
@@ -102,6 +101,7 @@ export const useChatStore = defineStore('chat', () => {
             createdAt: new Date().toString(),
             status: MESSAGE_STATUS.PENDING,
         });
+        chat.status = CHAT_STATUS.SENDING_MESSAGE;
 
         const { error, data } = await useFetch(`/api/messages/send`, {
             method: 'POST',

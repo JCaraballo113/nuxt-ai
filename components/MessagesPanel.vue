@@ -26,11 +26,7 @@ const { y } = useScroll(el, { behavior: 'smooth' });
 watch(
     () => chat.status,
     (currentStatus, oldStatus) => {
-        if (
-            el.value &&
-            oldStatus === CHAT_STATUS.SENDING_MESSAGE &&
-            currentStatus === CHAT_STATUS.IDLE
-        ) {
+        if (el.value && currentStatus === CHAT_STATUS.SENDING_MESSAGE) {
             y.value += el.value?.scrollHeight;
         }
     }
@@ -54,7 +50,11 @@ watch(
         >
             Start or select a conversation
         </p>
-        <div v-else class="w-full h-full overflow-y-scroll" ref="el">
+        <div
+            v-else
+            class="w-full h-full overflow-y-scroll flex flex-col justify-between"
+            ref="el"
+        >
             <div
                 class="border-b border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-background/75 backdrop-blur"
             >
@@ -63,7 +63,7 @@ watch(
             <template v-if="chat.status !== CHAT_STATUS.LOADING_MESSAGES">
                 <MessageList />
                 <div
-                    class="border-t border-gray-200 dark:border-gray-800 flex justify-between items-center absolute bottom-0 bg-background/75 backdrop-blur w-full"
+                    class="border-t border-gray-200 dark:border-gray-800 flex justify-between items-center sticky bottom-0 bg-background/75 backdrop-blur w-full"
                 >
                     <UForm
                         @submit="onMessage"
