@@ -51,5 +51,3 @@ const handleSubmit = async () => {
         </UModal>
     </ClientOnly>
 </template>
-
-<style></style>
