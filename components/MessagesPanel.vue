@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CHAT_STATUSES } from '~/stores/chat';
+import { CHAT_STATUS } from '~/stores/chat';
 
 const { chat, sendMessage } = useChatStore();
 const message = ref('');
@@ -15,8 +15,8 @@ const isChatting = computed(() => chat.currentConversation !== '');
 
 const messaging = computed(() => {
     return (
-        chat.status === CHAT_STATUSES.SENDING_MESSAGE ||
-        chat.status === CHAT_STATUSES.RECEIVING_MESSAGE
+        chat.status === CHAT_STATUS.SENDING_MESSAGE ||
+        chat.status === CHAT_STATUS.RECEIVING_MESSAGE
     );
 });
 

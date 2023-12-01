@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { useChatStore } from '#imports';
-import { CHAT_STATUSES } from '~/stores/chat';
+import { CHAT_STATUS } from '~/stores/chat';
 
 const { createConversation, fetchConversations, chat } = useChatStore();
 
 const creatingConversation = computed(() => {
-    return chat.status === CHAT_STATUSES.CREATING_CONVERSATION;
+    return chat.status === CHAT_STATUS.CREATING_CONVERSATION;
 });
 
 fetchConversations();

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-export enum CHAT_STATUSES {
+export enum CHAT_STATUS {
     IDLE,
     LOADING_MESSAGES,
     SENDING_MESSAGE,
@@ -32,7 +32,7 @@ interface ChatState {
     conversations: Conversation[];
     messages: Message[];
     error: string | null;
-    status: CHAT_STATUSES;
+    status: CHAT_STATUS;
 }
 export const useChatStore = defineStore('chat', () => {
     const chat = reactive<ChatState>({
@@ -40,22 +40,22 @@ export const useChatStore = defineStore('chat', () => {
         conversations: [],
         messages: [],
         error: null,
-        status: CHAT_STATUSES.IDLE,
+        status: CHAT_STATUS.IDLE,
     });
 
     const createConversation = async () => {
-        chat.status = CHAT_STATUSES.CREATING_CONVERSATION;
+        chat.status = CHAT_STATUS.CREATING_CONVERSATION;
         chat.error = null;
         const { data, error } = await useFetch('/api/conversations/new');
         if (data.value) {
             chat.conversations.unshift(data.value as Conversation);
             chat.currentConversation = data.value.id;
         }
-        chat.status = CHAT_STATUSES.IDLE;
+        chat.status = CHAT_STATUS.IDLE;
     };
 
     const fetchConversations = async () => {
-        chat.status = CHAT_STATUSES.LOADING_CONVERSATIONS;
+        chat.status = CHAT_STATUS.LOADING_CONVERSATIONS;
         chat.error = null;
         const { data, error } = await useFetch('/api/conversations', {
             headers: useRequestHeaders(['cookie']),
@@ -64,7 +64,7 @@ export const useChatStore = defineStore('chat', () => {
         if (data.value) {
             chat.conversations = [...data.value] as Conversation[];
         }
-        chat.status = CHAT_STATUSES.IDLE;
+        chat.status = CHAT_STATUS.IDLE;
     };
 
     const setConversation = (conversationId: string) => {
@@ -75,7 +75,7 @@ export const useChatStore = defineStore('chat', () => {
         if (chat.currentConversation === '') {
             return;
         }
-        chat.status = CHAT_STATUSES.SENDING_MESSAGE;
+        chat.status = CHAT_STATUS.SENDING_MESSAGE;
 
         chat.messages.push({
             content,
@@ -83,7 +83,7 @@ export const useChatStore = defineStore('chat', () => {
             createdAt: new Date().toString(),
         });
 
-        chat.status = CHAT_STATUSES.IDLE;
+        chat.status = CHAT_STATUS.IDLE;
     };
 
     return {
