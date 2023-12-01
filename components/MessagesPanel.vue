@@ -68,6 +68,7 @@ watch(
                             :loading="messaging"
                             size="sm"
                             type="submit"
+                            :disabled="messaging"
                         />
                     </UForm>
                 </div>

@@ -15,7 +15,7 @@ export enum CHAT_STATUS {
 }
 export type Message = {
     id?: string;
-    role: 'assistant' | 'user';
+    role: 'ai' | 'human';
     content: string;
     createdAt: string;
     delivered: boolean;
@@ -79,7 +79,7 @@ export const useChatStore = defineStore('chat', () => {
         chat.status = CHAT_STATUS.SENDING_MESSAGE;
         chat.messages.push({
             content,
-            role: 'user',
+            role: 'human',
             createdAt: new Date().toString(),
             delivered: true,
         });

@@ -21,7 +21,7 @@ const avatar = computed(() => {
         >
             <UAvatar
                 :src="
-                    message.role === 'user'
+                    message.role === 'human'
                         ? avatar
                         : '/images/avatars/default-avatar.png'
                 "

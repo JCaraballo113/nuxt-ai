@@ -13,5 +13,8 @@ export default defineEventHandler(async (event) => {
                 id: conversation as string,
             },
         },
+        orderBy: {
+            createdAt: 'asc',
+        },
     });
 });
