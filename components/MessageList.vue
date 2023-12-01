@@ -2,10 +2,6 @@
 const { chat } = useChatStore();
 
 const chatListRef = ref<HTMLElement | null>(null);
-const lastMessageStatus = computed(() => {
-    return chat.messages[chat.messages.length - 1].status;
-});
-
 watch(
     () => chatListRef.value,
     () => {
@@ -14,12 +10,6 @@ watch(
         }
     }
 );
-
-// nextTick(() => {
-//     if (chatListRef.value) {
-//         chatListRef.value.scrollTop = chatListRef.value.scrollHeight;
-//     }
-// });
 </script>
 
 <template>
