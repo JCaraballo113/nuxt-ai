@@ -10,6 +10,7 @@ const handleSubmit = async () => {
 
 onMounted(() => {
     const apiKey = localStorage.getItem('chat-api-key');
+
     setApiKey(apiKey ?? '');
 });
 </script>
@@ -20,9 +21,19 @@ onMounted(() => {
         >
             <ConversationPanel />
         </section>
-        <section class="w-full md:w-[60%] md:h-full h-[60%]">
-            <MessagesPanel />
-        </section>
+        <ClientOnly>
+            <section class="w-full md:w-[60%] md:h-full h-[60%]">
+                <MessagesPanel />
+            </section>
+
+            <template #placeholder>
+                <p
+                    class="w-full md:w-[60%] md:h-full h-[60%] flex items-center justify-center"
+                >
+                    Start or select a conversation
+                </p>
+            </template>
+        </ClientOnly>
     </div>
     <ClientOnly>
         <UModal v-model="isApiModalOpen" prevent-close>
@@ -32,10 +43,11 @@ onMounted(() => {
                         <h4 class="text-xl font-semibold">API Key</h4>
                     </template>
                     <p>
-                        Hello! In order to not get murdered by OpenAI rates you
-                        must provide your own API key. Don't worry I never store
-                        it anywhere and only send it over the wire to talk to
-                        OpenAI
+                        Hello! In order to not get my wallet crying due to
+                        OpenAI rates, you must provide your own API key. Don't
+                        worry I never store it anywhere (except localStorage
+                        under the key <code>chat-api-key</code>) and only send
+                        it over the wire to talk to OpenAI
                     </p>
                     <UInput
                         class="mt-4"
