@@ -7,6 +7,11 @@ const handleSubmit = async () => {
     if (apiKey.value === '') return;
     setApiKey(apiKey.value);
 };
+
+onMounted(() => {
+    const apiKey = localStorage.getItem('chat-api-key');
+    setApiKey(apiKey ?? '');
+});
 </script>
 <template>
     <div class="flex w-full h-[calc(100vh-96px-64px)] flex-col md:flex-row">

@@ -54,6 +54,9 @@ export const useChatStore = defineStore('chat', () => {
     });
 
     const setApiKey = (apiKey: string) => {
+        if (process.client) {
+            window.localStorage.setItem('chat-api-key', apiKey);
+        }
         chat.apiKey = apiKey;
     };
 
