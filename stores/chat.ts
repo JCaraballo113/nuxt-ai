@@ -118,6 +118,7 @@ export const useChatStore = defineStore('chat', () => {
             body: JSON.stringify({
                 content,
                 conversation: chat.currentConversation,
+                apiKey: chat.apiKey,
             }),
         });
 
