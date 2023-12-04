@@ -1,9 +1,6 @@
 <script lang="ts" setup>
-import io from 'socket.io-client';
-import type { Socket } from 'socket.io-client';
-let socket: Socket | undefined;
-
 const { chat, setApiKey, updateAIMessage } = useChatStore();
+const supabase = useSupabaseClient();
 const isApiModalOpen = computed(() => chat.apiKey === '');
 const apiKey = ref('');
 
@@ -17,21 +14,16 @@ onMounted(() => {
 
     setApiKey(apiKey ?? '');
 
-    socket = io(
-        `${location.protocol === 'https:' ? 'wss://' : 'ws://'}${location.host}`
+    const channel = supabase.channel('conversation');
+
+    channel.on('broadcast', { event: 'token-stream' }, ({ payload }) =>
+        updateAIMessage(payload)
     );
 
-    socket.on('conversation-stream', (messageValue: string) => {
-        try {
-            console.log('Frontend received: ', messageValue);
-            updateAIMessage(messageValue);
-        } catch (e) {
-            console.error(e);
-        }
-    });
+    channel.subscribe();
 
     onUnmounted(() => {
-        socket?.disconnect();
+        channel.unsubscribe();
     });
 });
 </script>

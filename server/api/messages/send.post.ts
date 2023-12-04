@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { ConversationChain } from 'langchain/chains';
 import buildLLM from '~/server/ai/llms/openai';
 import buildMemory from '~/server/ai/memories/PrismaChatMemory';
+import { serverSupabaseClient } from '#supabase/server';
 
 const prisma = new PrismaClient();
 
@@ -27,8 +28,9 @@ export default defineEventHandler(async (event) => {
             },
         },
     });
-
-    const { appSocket } = event.context;
+    const supabaseServer = await serverSupabaseClient(event);
+    const conversationChannel = supabaseServer.channel(`conversation`);
+    conversationChannel.subscribe();
 
     const llm = buildLLM(apiKey);
     const memory = buildMemory(conversation);
@@ -43,7 +45,11 @@ export default defineEventHandler(async (event) => {
             callbacks: [
                 {
                     handleLLMNewToken: (token) => {
-                        appSocket.emit('conversation-stream', token);
+                        conversationChannel.send({
+                            type: 'broadcast',
+                            event: 'token-stream',
+                            payload: token,
+                        });
                     },
                 },
             ],
