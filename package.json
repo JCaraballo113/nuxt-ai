@@ -31,6 +31,8 @@
     "dependencies": {
         "langchain": "^0.0.199",
         "pinia": "^2.1.7",
+        "socket.io": "^4.7.2",
+        "socket.io-client": "^4.7.2",
         "zod": "^3.22.4"
     }
 }

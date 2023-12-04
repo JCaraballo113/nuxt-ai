@@ -7,7 +7,10 @@ export default defineEventHandler(async (event) => {
     await protectRoute(event);
     const {
         _user: { id: user_id },
+        appSocket,
     } = event.context;
+
+    appSocket.emit('conversations', 'loaded conversations');
 
     const conversations = await prisma.conversation.findMany({
         where: {

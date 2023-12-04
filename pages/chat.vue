@@ -1,5 +1,9 @@
 <script lang="ts" setup>
-const { chat, setApiKey } = useChatStore();
+import io from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
+let socket: Socket | undefined;
+
+const { chat, setApiKey, updateAIMessage } = useChatStore();
 const isApiModalOpen = computed(() => chat.apiKey === '');
 const apiKey = ref('');
 
@@ -12,6 +16,23 @@ onMounted(() => {
     const apiKey = localStorage.getItem('chat-api-key');
 
     setApiKey(apiKey ?? '');
+
+    socket = io(
+        `${location.protocol === 'https:' ? 'wss://' : 'ws://'}${location.host}`
+    );
+
+    socket.on('conversation-stream', (messageValue: string) => {
+        try {
+            console.log('Frontend received: ', messageValue);
+            updateAIMessage(messageValue);
+        } catch (e) {
+            console.error(e);
+        }
+    });
+
+    onUnmounted(() => {
+        socket?.disconnect();
+    });
 });
 </script>
 <template>

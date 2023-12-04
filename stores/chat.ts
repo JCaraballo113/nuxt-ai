@@ -76,6 +76,16 @@ export const useChatStore = defineStore('chat', () => {
         chat.status = CHAT_STATUS.IDLE;
     };
 
+    const updateAIMessage = (token: string) => {
+        chat.status = CHAT_STATUS.RECEIVING_MESSAGE;
+        const latestAIMessage = getLatestMessage('ai');
+
+        if (latestAIMessage) {
+            latestAIMessage.status = MESSAGE_STATUS.DELIVERED;
+            latestAIMessage.content += token;
+        }
+    };
+
     const fetchConversations = async () => {
         chat.status = CHAT_STATUS.LOADING_CONVERSATIONS;
         chat.error = undefined;
@@ -178,5 +188,6 @@ export const useChatStore = defineStore('chat', () => {
         sendMessage,
         loadMessages,
         setApiKey,
+        updateAIMessage,
     };
 });

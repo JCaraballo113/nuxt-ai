@@ -28,6 +28,8 @@ export default defineEventHandler(async (event) => {
         },
     });
 
+    const { appSocket } = event.context;
+
     const llm = buildLLM(apiKey);
     const memory = buildMemory(conversation);
 
@@ -35,7 +37,18 @@ export default defineEventHandler(async (event) => {
         llm,
         memory,
     });
-    const { response } = await conversationChain.call({ input: content });
+    const { response } = await conversationChain.call(
+        { input: content },
+        {
+            callbacks: [
+                {
+                    handleLLMNewToken: (token) => {
+                        appSocket.emit('conversation-stream', token);
+                    },
+                },
+            ],
+        }
+    );
 
     return response;
 });
