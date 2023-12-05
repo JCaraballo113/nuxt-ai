@@ -23,7 +23,10 @@ const messaging = computed(() => {
     );
 });
 
-const streamTokens = () => {
+const channelStreamedTokens = () => {
+    if (channel) {
+        channel.unsubscribe();
+    }
     channel = supabase.channel(`conversation-${chat.currentConversation}`);
 
     channel.on('broadcast', { event: 'token-stream' }, ({ payload }) =>
@@ -37,9 +40,8 @@ watch(
     () => chat.currentConversation,
     (currConvo, oldConvo) => {
         if (currConvo !== '' && currConvo !== oldConvo) {
-            if (channel && chat.streaming) {
-                channel.unsubscribe();
-                streamTokens();
+            if (chat.streaming) {
+                channelStreamedTokens();
             }
             loadMessages();
         }
@@ -48,12 +50,9 @@ watch(
 
 watch(
     () => chat.streaming,
-    (streaming) => {
-        if (streaming) {
-            if (channel) {
-                channel.unsubscribe();
-            }
-            streamTokens();
+    (streaming, previouslyStreaming) => {
+        if (!previouslyStreaming && streaming) {
+            channelStreamedTokens();
         } else if (!streaming && channel) {
             channel.unsubscribe();
             channel = null;
@@ -63,13 +62,14 @@ watch(
 
 onMounted(() => {
     if (chat.currentConversation !== '' && chat.streaming) {
-        streamTokens();
+        channelStreamedTokens();
     }
 });
 
 onUnmounted(() => {
     if (channel) {
         channel.unsubscribe();
+        channel = null;
     }
 });
 </script>
