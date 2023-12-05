@@ -54,7 +54,6 @@ export default defineEventHandler(async (event) => {
                 {
                     handleLLMNewToken: (token) => {
                         if (conversationChannel) {
-                            console.log('Broadcasting to channel');
                             conversationChannel.send({
                                 type: 'broadcast',
                                 event: 'token-stream',
