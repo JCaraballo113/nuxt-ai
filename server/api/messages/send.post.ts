@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
         conversationChannel.subscribe();
     }
 
-    const llm = buildLLM(apiKey);
+    const llm = buildLLM(apiKey, streaming);
     const memory = buildMemory(conversation);
 
     const conversationChain = new ConversationChain({
