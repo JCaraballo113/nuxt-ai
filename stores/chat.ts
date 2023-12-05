@@ -43,6 +43,7 @@ interface ChatState {
     error?: string;
     status: CHAT_STATUS;
     apiKey: string;
+    streaming: boolean;
 }
 export const useChatStore = defineStore('chat', () => {
     const chat = reactive<ChatState>({
@@ -51,6 +52,7 @@ export const useChatStore = defineStore('chat', () => {
         messages: [],
         status: CHAT_STATUS.IDLE,
         apiKey: '',
+        streaming: false,
     });
 
     const setApiKey = (apiKey: string) => {
@@ -129,6 +131,7 @@ export const useChatStore = defineStore('chat', () => {
                 content,
                 conversation: chat.currentConversation,
                 apiKey: chat.apiKey,
+                streaming: chat.streaming,
             }),
         });
 
@@ -145,7 +148,7 @@ export const useChatStore = defineStore('chat', () => {
                 lastAiMessage.status = MESSAGE_STATUS.FAILED;
                 lastAiMessage.content = 'Sorry, I cant help you right now';
             }
-        } else {
+        } else if (!chat.streaming) {
             const lastAIMessage = getLatestMessage('ai');
             if (lastAIMessage) {
                 lastAIMessage.status = MESSAGE_STATUS.DELIVERED;

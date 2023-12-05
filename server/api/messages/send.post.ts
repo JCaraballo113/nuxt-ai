@@ -1,4 +1,5 @@
 import protectRoute from '~/server/protectRoute';
+import { RealtimeChannel } from '@supabase/realtime-js';
 import { PrismaClient } from '@prisma/client';
 import { ConversationChain } from 'langchain/chains';
 import buildLLM from '~/server/ai/llms/openai';
@@ -9,7 +10,8 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async (event) => {
     await protectRoute(event);
-    const { content, conversation, apiKey } = await readBody(event);
+    const { content, conversation, apiKey, streaming } = await readBody(event);
+    console.log(streaming);
 
     if (apiKey === '') {
         throw createError({
@@ -29,10 +31,14 @@ export default defineEventHandler(async (event) => {
         },
     });
     const supabaseServer = await serverSupabaseClient(event);
-    const conversationChannel = supabaseServer.channel(
-        `conversation-${conversation}`
-    );
-    conversationChannel.subscribe();
+    let conversationChannel: RealtimeChannel | null = null;
+
+    if (streaming) {
+        conversationChannel = supabaseServer.channel(
+            `conversation-${conversation}`
+        );
+        conversationChannel.subscribe();
+    }
 
     const llm = buildLLM(apiKey);
     const memory = buildMemory(conversation);
@@ -47,14 +53,20 @@ export default defineEventHandler(async (event) => {
             callbacks: [
                 {
                     handleLLMNewToken: (token) => {
-                        conversationChannel.send({
-                            type: 'broadcast',
-                            event: 'token-stream',
-                            payload: token,
-                        });
+                        if (conversationChannel) {
+                            console.log('Broadcasting to channel');
+                            conversationChannel.send({
+                                type: 'broadcast',
+                                event: 'token-stream',
+                                payload: token,
+                            });
+                        }
                     },
                     handleLLMEnd(output, runId, parentRunId, tags) {
-                        conversationChannel.unsubscribe();
+                        if (conversationChannel) {
+                            conversationChannel.unsubscribe();
+                            conversationChannel = null;
+                        }
                     },
                 },
             ],

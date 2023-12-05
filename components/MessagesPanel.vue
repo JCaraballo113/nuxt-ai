@@ -37,18 +37,32 @@ watch(
     () => chat.currentConversation,
     (currConvo, oldConvo) => {
         if (currConvo !== '' && currConvo !== oldConvo) {
+            if (channel && chat.streaming) {
+                channel.unsubscribe();
+                streamTokens();
+            }
             loadMessages();
+        }
+    }
+);
 
+watch(
+    () => chat.streaming,
+    (streaming) => {
+        if (streaming) {
             if (channel) {
                 channel.unsubscribe();
             }
             streamTokens();
+        } else if (!streaming && channel) {
+            channel.unsubscribe();
+            channel = null;
         }
     }
 );
 
 onMounted(() => {
-    if (chat.currentConversation !== '') {
+    if (chat.currentConversation !== '' && chat.streaming) {
         streamTokens();
     }
 });
@@ -73,6 +87,12 @@ onUnmounted(() => {
                 class="border-b h-[10%] border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-background/75 backdrop-blur"
             >
                 <p class="p-4">{{ chat.currentConversation }}</p>
+                <UCheckbox
+                    class="p-4"
+                    :value="chat.streaming"
+                    label="Streaming"
+                    @change="chat.streaming = !chat.streaming"
+                />
             </div>
             <template v-if="chat.status !== CHAT_STATUS.LOADING_MESSAGES">
                 <MessageList />
