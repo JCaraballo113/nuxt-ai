@@ -29,7 +29,9 @@ export default defineEventHandler(async (event) => {
         },
     });
     const supabaseServer = await serverSupabaseClient(event);
-    const conversationChannel = supabaseServer.channel(`conversation`);
+    const conversationChannel = supabaseServer.channel(
+        `conversation-${conversation}`
+    );
     conversationChannel.subscribe();
 
     const llm = buildLLM(apiKey);
@@ -50,6 +52,9 @@ export default defineEventHandler(async (event) => {
                             event: 'token-stream',
                             payload: token,
                         });
+                    },
+                    handleLLMEnd(output, runId, parentRunId, tags) {
+                        conversationChannel.unsubscribe();
                     },
                 },
             ],

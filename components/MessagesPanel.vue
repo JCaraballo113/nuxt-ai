@@ -1,9 +1,11 @@
 <script lang="ts" setup>
+import { RealtimeChannel } from '@supabase/realtime-js';
 import { CHAT_STATUS } from '~/stores/chat';
 
-const { chat, sendMessage, loadMessages } = useChatStore();
+const { chat, sendMessage, loadMessages, updateAIMessage } = useChatStore();
 const message = ref('');
-const el = ref<HTMLElement | null>(null);
+const supabase = useSupabaseClient();
+let channel: RealtimeChannel | null = null;
 
 const onMessage = () => {
     if (message.value.length > 0) {
@@ -21,14 +23,41 @@ const messaging = computed(() => {
     );
 });
 
+const streamTokens = () => {
+    channel = supabase.channel(`conversation-${chat.currentConversation}`);
+
+    channel.on('broadcast', { event: 'token-stream' }, ({ payload }) =>
+        updateAIMessage(payload)
+    );
+
+    channel.subscribe();
+};
+
 watch(
     () => chat.currentConversation,
     (currConvo, oldConvo) => {
         if (currConvo !== '' && currConvo !== oldConvo) {
             loadMessages();
+
+            if (channel) {
+                channel.unsubscribe();
+            }
+            streamTokens();
         }
     }
 );
+
+onMounted(() => {
+    if (chat.currentConversation !== '') {
+        streamTokens();
+    }
+});
+
+onUnmounted(() => {
+    if (channel) {
+        channel.unsubscribe();
+    }
+});
 </script>
 
 <template>
