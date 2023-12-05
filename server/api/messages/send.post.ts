@@ -11,7 +11,6 @@ const prisma = new PrismaClient();
 export default defineEventHandler(async (event) => {
     await protectRoute(event);
     const { content, conversation, apiKey, streaming } = await readBody(event);
-    console.log(streaming);
 
     if (apiKey === '') {
         throw createError({
